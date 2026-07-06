@@ -32,15 +32,15 @@ export default function App() {
           <div className="flex justify-between items-center h-16">
             
             {/* Logo area */}
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('fan')} role="button" tabIndex={0} onKeyDown={(e) => { if(e.key === 'Enter') setActiveTab('fan'); }}>
-              <div className="bg-gradient-to-br from-emerald-500 to-teal-700 text-white p-2 rounded-lg shadow-sm">
+            <button className="flex items-center gap-2 cursor-pointer border-none bg-transparent p-0" onClick={() => setActiveTab('fan')} aria-label="MatchDay Genie Home">
+              <div className="bg-gradient-to-br from-emerald-500 to-teal-700 text-white p-2 rounded-lg shadow-sm flex items-center justify-center">
                 <Trophy className="w-5 h-5" />
               </div>
-              <div>
+              <div className="text-left">
                 <h1 className="font-bold text-gray-900 dark:text-white leading-tight tracking-tight">World Cup 2026</h1>
                 <p className="text-[10px] uppercase font-semibold tracking-wider text-emerald-600 dark:text-emerald-400">MatchDay Genie</p>
               </div>
-            </div>
+            </button>
 
             {/* Navigation Tabs */}
             <nav aria-label="Main Navigation" className="flex space-x-1 bg-gray-100 dark:bg-slate-800 p-1 rounded-xl border border-gray-200 dark:border-slate-700 transition-colors duration-300">

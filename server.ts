@@ -16,7 +16,7 @@ async function startServer() {
 
   // Security: HTTP headers
   app.use(helmet({
-    contentSecurityPolicy: false // Disable CSP for Vite dev server compatibility
+    contentSecurityPolicy: process.env.NODE_ENV === "production" ? undefined : false
   }));
 
   // Security: CORS

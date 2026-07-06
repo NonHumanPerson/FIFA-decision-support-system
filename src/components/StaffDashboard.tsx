@@ -17,7 +17,7 @@ const mockMetrics: StadiumMetrics = {
   activeIncidents: 2,
   sustainabilityScore: 92,
   transitStatus: "Normal"
-} as any;
+};
 
 const mockIncidents = [
   "Crowd buildup detected outside Gate A. Recommend redirecting to Gate B.",
@@ -109,12 +109,12 @@ export default React.memo(function StaffDashboard() {
                 <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50">
                   <Leaf className="w-5 h-5 text-green-500 mb-2" />
                   <p className="text-sm text-slate-500 dark:text-slate-400">Sustainability</p>
-                  <p className="text-xl font-bold text-slate-900 dark:text-white">{(metrics as any).sustainabilityScore}/100</p>
+                  <p className="text-xl font-bold text-slate-900 dark:text-white">{metrics.sustainabilityScore}/100</p>
                 </div>
                 <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50">
                   <TrainFront className="w-5 h-5 text-blue-500 mb-2" />
                   <p className="text-sm text-slate-500 dark:text-slate-400">Transit Status</p>
-                  <p className="text-xl font-bold text-slate-900 dark:text-white">{(metrics as any).transitStatus}</p>
+                  <p className="text-xl font-bold text-slate-900 dark:text-white">{metrics.transitStatus}</p>
                 </div>
               </div>
 
@@ -153,23 +153,15 @@ export default React.memo(function StaffDashboard() {
             
             <div className="grid sm:grid-cols-2 gap-3">
               {mockIncidents.map((inc, i) => (
-                <div 
+                <button 
                   key={i}
                   onClick={() => setSelectedIncident(inc)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setSelectedIncident(inc);
-                    }
-                  }}
-                  role="button"
-                  tabIndex={0}
                   aria-pressed={selectedIncident === inc}
                   className={cn(
-                    "p-4 rounded-xl border cursor-pointer transition-all",
+                    "p-4 rounded-xl border text-left cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full",
                     selectedIncident === inc 
                       ? "border-indigo-500 dark:border-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 ring-1 ring-indigo-500 dark:ring-indigo-400 shadow-sm" 
-                      : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                      : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/50 bg-transparent"
                   )}
                 >
                   <div className="flex items-start gap-3">
@@ -177,7 +169,7 @@ export default React.memo(function StaffDashboard() {
                     <p className="text-sm text-slate-700 dark:text-slate-300 font-medium">{inc}</p>
                   </div>
                   <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 pl-5">2 mins ago</p>
-                </div>
+                </button>
               ))}
             </div>
           </div>

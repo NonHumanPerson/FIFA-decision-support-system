@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Send, MapPin, Loader2, Bot, User, ShieldAlert, Trophy, Map } from "lucide-react";
+import { Send, MapPin, Loader2, Bot, User, ShieldAlert, Map } from "lucide-react";
 import { ChatMessage } from "../types";
 import { cn } from "../lib/utils";
 import Markdown from "react-markdown";

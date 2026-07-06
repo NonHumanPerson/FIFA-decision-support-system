@@ -95,21 +95,21 @@ export default React.memo(function StadiumMap() {
 
     const amenityGroup = svg.append('g').attr('class', 'amenities');
 
-    const nodes = amenityGroup.selectAll('.amenity')
-      .data(amenities, (d: any) => (d as Amenity).id)
+    const nodes = amenityGroup.selectAll<SVGGElement, Amenity>('.amenity')
+      .data(amenities, (d: Amenity) => d.id)
       .enter()
       .append('g')
       .attr('class', 'amenity')
-      .attr('data-type', (d: any) => (d as Amenity).type)
-      .attr('transform', (d: any) => `translate(${(d as Amenity).x}, ${(d as Amenity).y})`)
+      .attr('data-type', (d: Amenity) => d.type)
+      .attr('transform', (d: Amenity) => `translate(${d.x}, ${d.y})`)
       .style('cursor', 'pointer')
-      .on('mouseover', function(event, d: any) {
+      .on('mouseover', function(event, d: Amenity) {
         d3.select(this).select('circle')
           .transition().duration(200)
           .attr('r', 18);
         
         tooltip.transition().duration(200).style('opacity', 1);
-        tooltip.html((d as Amenity).label)
+        tooltip.html(d.label)
           .style('left', (event.pageX + 10) + 'px')
           .style('top', (event.pageY - 28) + 'px')
           .classed('hidden', false);
@@ -144,7 +144,7 @@ export default React.memo(function StadiumMap() {
 
     nodes.append('circle')
       .attr('r', 14)
-      .attr('fill', (d: any) => getColor((d as Amenity).type))
+      .attr('fill', (d: Amenity) => getColor(d.type))
       .attr('stroke', '#ffffff')
       .attr('stroke-width', 2)
       .attr('box-shadow', '0 4px 6px -1px rgb(0 0 0 / 0.1)');
@@ -153,7 +153,7 @@ export default React.memo(function StadiumMap() {
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'central')
       .attr('font-size', '14px')
-      .text((d: any) => getIcon((d as Amenity).type));
+      .text((d: Amenity) => getIcon(d.type));
 
     return () => {
       d3.selectAll('.stadium-map-tooltip').remove();

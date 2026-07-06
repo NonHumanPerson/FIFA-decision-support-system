@@ -15,4 +15,6 @@ export interface StadiumMetrics {
   };
   temperature: number;
   activeIncidents: number;
+  sustainabilityScore: number;
+  transitStatus: string;
 }

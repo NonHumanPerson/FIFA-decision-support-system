@@ -4,7 +4,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import FanHub from './FanHub';
 
 // Mock fetch
-global.fetch = vi.fn() as any;
+global.fetch = vi.fn() as unknown as typeof fetch;
 
 describe('FanHub component', () => {
   beforeEach(() => {
@@ -25,7 +25,7 @@ describe('FanHub component', () => {
   });
 
   it('sends a message and displays loading state', async () => {
-    (global.fetch as any).mockResolvedValueOnce({
+    (global.fetch as import("vitest").Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ text: 'Hello, fan!' })
     });
