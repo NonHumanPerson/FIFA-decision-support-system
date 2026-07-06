@@ -4,12 +4,26 @@ import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
+import helmet from "helmet";
+import cors from "cors";
+import compression from "compression";
 
 dotenv.config();
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
+
+  // Security: HTTP headers
+  app.use(helmet({
+    contentSecurityPolicy: false // Disable CSP for Vite dev server compatibility
+  }));
+
+  // Security: CORS
+  app.use(cors());
+
+  // Efficiency: Compress responses
+  app.use(compression());
 
   // Security: Apply rate limiting to all requests
   const apiLimiter = rateLimit({
@@ -18,7 +32,7 @@ async function startServer() {
     message: { error: "Too many requests, please try again later." }
   });
 
-  app.use(express.json());
+  app.use(express.json({ limit: "10kb" }));
   app.use("/api/", apiLimiter);
 
   // Initialize Gemini lazily
@@ -45,6 +59,9 @@ async function startServer() {
       }
       if (!Array.isArray(history) || history.length > 50) {
         return res.status(400).json({ error: "Invalid or excessive history length." });
+      }
+      if (userLocation !== undefined && (typeof userLocation !== "string" || userLocation.length > 100)) {
+        return res.status(400).json({ error: "Invalid user location." });
       }
 
       const systemInstruction = `You are the official 'MatchDay Genie' for the FIFA World Cup 2026. 
@@ -78,6 +95,9 @@ Provide realistic-sounding advice for a stadium context (e.g., direct them to ne
       // Security: Validate input
       if (!incident || typeof incident !== "string" || incident.length > 500) {
         return res.status(400).json({ error: "Invalid or oversized incident report." });
+      }
+      if (!metrics || typeof metrics !== "object") {
+        return res.status(400).json({ error: "Invalid metrics." });
       }
 
       const systemInstruction = `You are an AI Operational Intelligence Assistant for stadium management at the FIFA World Cup 2026.

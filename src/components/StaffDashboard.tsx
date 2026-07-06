@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Activity, Users, AlertTriangle, Thermometer, ShieldCheck, Loader2, RefreshCw } from "lucide-react";
+import React, { useState, useCallback } from "react";
+import { Activity, Users, AlertTriangle, Thermometer, ShieldCheck, Loader2, RefreshCw, Leaf, TrainFront } from "lucide-react";
 import { StadiumMetrics } from "../types";
 import Markdown from "react-markdown";
+import DOMPurify from "dompurify";
 import { cn } from "../lib/utils";
 
 const mockMetrics: StadiumMetrics = {
@@ -13,21 +14,25 @@ const mockMetrics: StadiumMetrics = {
     gateC: "Medium"
   },
   temperature: 28,
-  activeIncidents: 2
-};
+  activeIncidents: 2,
+  sustainabilityScore: 92,
+  transitStatus: "Normal"
+} as any;
 
 const mockIncidents = [
-  "Crowd buildup detected outside Gate A.",
-  "Medical request at Section 120, Row 5."
+  "Crowd buildup detected outside Gate A. Recommend redirecting to Gate B.",
+  "Medical request at Section 120, Row 5.",
+  "Transit delay: Metro Line 3 experiencing 15min delay.",
+  "Accessibility request: Wheelchair assistance needed at Gate C."
 ];
 
-export default function StaffDashboard() {
+export default React.memo(function StaffDashboard() {
   const [metrics, setMetrics] = useState<StadiumMetrics>(mockMetrics);
   const [insights, setInsights] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedIncident, setSelectedIncident] = useState(mockIncidents[0]);
 
-  const generateInsights = async () => {
+  const generateInsights = useCallback(async () => {
     setIsLoading(true);
     try {
       const res = await fetch("/api/staff/insights", {
@@ -49,7 +54,7 @@ export default function StaffDashboard() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [metrics, selectedIncident]);
 
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
@@ -101,6 +106,16 @@ export default function StaffDashboard() {
                   <p className="text-sm text-slate-500 dark:text-slate-400">Active Units</p>
                   <p className="text-xl font-bold text-slate-900 dark:text-white">142</p>
                 </div>
+                <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                  <Leaf className="w-5 h-5 text-green-500 mb-2" />
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Sustainability</p>
+                  <p className="text-xl font-bold text-slate-900 dark:text-white">{(metrics as any).sustainabilityScore}/100</p>
+                </div>
+                <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                  <TrainFront className="w-5 h-5 text-blue-500 mb-2" />
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Transit Status</p>
+                  <p className="text-xl font-bold text-slate-900 dark:text-white">{(metrics as any).transitStatus}</p>
+                </div>
               </div>
 
               <div>
@@ -141,6 +156,15 @@ export default function StaffDashboard() {
                 <div 
                   key={i}
                   onClick={() => setSelectedIncident(inc)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedIncident(inc);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={selectedIncident === inc}
                   className={cn(
                     "p-4 rounded-xl border cursor-pointer transition-all",
                     selectedIncident === inc 
@@ -199,7 +223,7 @@ export default function StaffDashboard() {
                   prose-strong:text-indigo-300
                   prose-ul:list-disc prose-ul:pl-4 prose-li:marker:text-indigo-500
                 ">
-                  <Markdown>{insights}</Markdown>
+                  <Markdown>{DOMPurify.sanitize(insights)}</Markdown>
                 </div>
               )}
             </div>
@@ -210,4 +234,4 @@ export default function StaffDashboard() {
       </div>
     </div>
   );
-}
+});

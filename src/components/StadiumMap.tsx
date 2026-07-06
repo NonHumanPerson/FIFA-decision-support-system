@@ -23,7 +23,7 @@ const amenities: Amenity[] = [
   { id: 'e4', type: 'exit', x: 400, y: 500, label: 'Exit South' },
 ];
 
-export default function StadiumMap() {
+export default React.memo(function StadiumMap() {
   const svgRef = useRef<SVGSVGElement>(null);
   const [activeFilter, setActiveFilter] = useState<Amenity['type'] | 'all'>('all');
 
@@ -217,4 +217,4 @@ export default function StadiumMap() {
       </div>
     </div>
   );
-}
+});

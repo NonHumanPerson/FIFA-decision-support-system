@@ -27,12 +27,12 @@ export default function App() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans flex flex-col selection:bg-emerald-200 dark:selection:bg-emerald-900 transition-colors duration-300">
       
       {/* Top Navigation Bar */}
-      <nav className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 shadow-sm sticky top-0 z-50 transition-colors duration-300">
+      <header className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 shadow-sm sticky top-0 z-50 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             
             {/* Logo area */}
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('fan')}>
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('fan')} role="button" tabIndex={0} onKeyDown={(e) => { if(e.key === 'Enter') setActiveTab('fan'); }}>
               <div className="bg-gradient-to-br from-emerald-500 to-teal-700 text-white p-2 rounded-lg shadow-sm">
                 <Trophy className="w-5 h-5" />
               </div>
@@ -43,7 +43,7 @@ export default function App() {
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex space-x-1 bg-gray-100 dark:bg-slate-800 p-1 rounded-xl border border-gray-200 dark:border-slate-700 transition-colors duration-300">
+            <nav aria-label="Main Navigation" className="flex space-x-1 bg-gray-100 dark:bg-slate-800 p-1 rounded-xl border border-gray-200 dark:border-slate-700 transition-colors duration-300">
               <button
                 onClick={() => setIsDark(!isDark)}
                 className="flex items-center justify-center p-2 rounded-lg text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200 hover:bg-gray-200/50 dark:hover:bg-slate-700/50 transition-all duration-200"
@@ -79,11 +79,11 @@ export default function App() {
                 <Shield className="w-4 h-4" />
                 Command Center
               </button>
-            </div>
+            </nav>
             
           </div>
         </div>
-      </nav>
+      </header>
 
       {/* Main Content Area */}
       <main className="flex-1 overflow-hidden relative">

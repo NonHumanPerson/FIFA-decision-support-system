@@ -3,9 +3,10 @@ import { Send, MapPin, Loader2, Bot, User, ShieldAlert, Trophy, Map } from "luci
 import { ChatMessage } from "../types";
 import { cn } from "../lib/utils";
 import Markdown from "react-markdown";
+import DOMPurify from "dompurify";
 import StadiumMap from "./StadiumMap";
 
-export default function FanHub() {
+export default React.memo(function FanHub() {
   const [view, setView] = useState<'chat' | 'map'>('chat');
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -86,6 +87,7 @@ export default function FanHub() {
             <div className="flex items-center gap-1 bg-emerald-800/50 p-1 rounded-lg border border-emerald-700/50">
               <button 
                 onClick={() => setView('chat')} 
+                aria-pressed={view === 'chat'}
                 className={cn(
                   "px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-2", 
                   view === 'chat' ? "bg-emerald-600 text-white" : "text-emerald-100 hover:bg-emerald-700"
@@ -96,6 +98,7 @@ export default function FanHub() {
               </button>
               <button 
                 onClick={() => setView('map')} 
+                aria-pressed={view === 'map'}
                 className={cn(
                   "px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-2", 
                   view === 'map' ? "bg-emerald-600 text-white" : "text-emerald-100 hover:bg-emerald-700"
@@ -155,7 +158,7 @@ export default function FanHub() {
                   "prose prose-sm max-w-none dark:prose-invert",
                   msg.role === "user" && "prose-invert"
                 )}>
-                  <Markdown>{msg.text}</Markdown>
+                  <Markdown>{DOMPurify.sanitize(msg.text)}</Markdown>
                 </div>
               </div>
             </div>
@@ -226,4 +229,4 @@ export default function FanHub() {
       </div>
     </div>
   );
-}
+});
