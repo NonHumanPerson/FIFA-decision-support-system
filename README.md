@@ -5,12 +5,13 @@ MatchDay Genie is a GenAI-enabled full-stack solution designed to enhance stadiu
 ## 🌟 Key Features
 
 ### 🏟️ Fan Hub
-- **Multilingual AI Assistant**: Powered by Gemini, the chatbot assists fans with stadium navigation, transportation, accessibility, and stadium rules based on their current location.
+- **Multilingual AI Assistant**: Powered by Gemini 2.5 Flash, the chatbot assists fans with stadium navigation, transportation, accessibility, and stadium rules based on their current location.
 - **Interactive Stadium Map**: A responsive, interactive SVG map built with D3.js. It highlights key amenities like concessions, restrooms, and emergency exits, with interactive filtering capabilities.
+- **Context-Aware Recommendations**: The chatbot takes the fan's real-time location (e.g., "Gate B") to provide hyper-localized guidance.
 
 ### 🛡️ Command Center (Staff Operations)
 - **Real-Time Telemetry**: Monitor live stadium metrics including attendance, temperature, and gate congestion.
-- **Incident Management**: View active incident reports and medical alerts.
+- **Incident Management**: View active incident reports, medical alerts, and security updates.
 - **AI Decision Support**: Generate actionable, real-time action plans for crowd management and resource allocation using Gemini's advanced analysis capabilities based on selected incidents and current metrics.
 
 ### 🎨 Universal Features
@@ -20,57 +21,102 @@ MatchDay Genie is a GenAI-enabled full-stack solution designed to enhance stadiu
 
 ## 🚀 Tech Stack
 
-- **Frontend**: React 19, Vite, Tailwind CSS, Lucide React, D3.js, React Markdown
-- **Backend**: Node.js, Express.js
+- **Frontend**: React 19, Vite, Tailwind CSS, Lucide React, D3.js, React Markdown, DOMPurify
+- **Backend**: Node.js, Express.js (with Helmet, Express Rate Limit, Compression)
 - **AI Integration**: Google GenAI SDK (`@google/genai`) using `gemini-2.5-flash`
-- **Language**: TypeScript
+- **Testing**: Vitest, React Testing Library
+- **Language**: TypeScript (Strict Mode)
 
-## 📂 Project Structure
+## 📂 Architecture & Project Structure
+
+The application follows a full-stack SPA architecture where Vite is served via Express in both development and production.
 
 ```text
-├── server.ts                    # Express server and Gemini API routes
+├── server.ts                    # Express server (API & Static Asset Serving)
 ├── src/
-│   ├── App.tsx                  # Main application component & navigation
+│   ├── App.tsx                  # Main application component & routing state
+│   ├── App.test.tsx             # Main integration tests
 │   ├── index.css                # Global styles and Tailwind configuration
 │   ├── main.tsx                 # React entry point
 │   ├── types.ts                 # Shared TypeScript interfaces
 │   ├── lib/
 │   │   └── utils.ts             # Utility functions (e.g., Tailwind class merging)
 │   └── components/
-│       ├── FanHub.tsx           # Fan-facing AI chat interface
+│       ├── FanHub.tsx           # Fan-facing AI chat interface & layout
+│       ├── FanHub.test.tsx      # Tests for the Fan Hub
 │       ├── StadiumMap.tsx       # D3.js interactive stadium map
-│       └── StaffDashboard.tsx   # Staff operational command center
+│       ├── StadiumMap.test.tsx  # Tests for the Stadium Map
+│       ├── StaffDashboard.tsx   # Staff operational command center
+│       └── StaffDashboard.test.tsx # Tests for Staff Dashboard
 ├── package.json                 # Project metadata and dependencies
-└── vite.config.ts               # Vite configuration
+├── vite.config.ts               # Vite & Vitest configuration
+└── tsconfig.json                # TypeScript compiler configuration
 ```
+
+## 🔌 API Reference
+
+### `POST /api/chat`
+Handles fan interactions with the MatchDay Genie assistant.
+- **Body**: `{ message: string, history: ChatMessage[], userLocation?: string }`
+- **Response**: `{ text: string }`
+
+### `POST /api/staff/insights`
+Generates real-time AI operational insights for stadium staff.
+- **Body**: `{ metrics: StadiumMetrics, incident: string }`
+- **Response**: `{ insights: string }`
 
 ## ⚙️ Setup Instructions
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+### Prerequisites
+- Node.js (v18+)
+- npm or yarn
 
-2. **Environment Variables:**
-   Create a `.env` file in the root directory and add your Google Gemini API key:
-   ```env
-   GEMINI_API_KEY=your_gemini_api_key_here
-   ```
+### 1. Install dependencies
+```bash
+npm install
+```
 
-3. **Development Mode:**
-   Run the full-stack app in development mode (starts Express server with Vite middleware):
-   ```bash
-   npm run dev
-   ```
+### 2. Environment Variables
+Create a `.env` file in the root directory and add your Google Gemini API key:
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+*(Note: A `.env.example` file is provided for reference.)*
 
-4. **Production Build:**
-   Build the client and server for production:
-   ```bash
-   npm run build
-   npm run start
-   ```
+### 3. Development Mode
+Run the full-stack app in development mode (starts Express server with Vite middleware on port 3000):
+```bash
+npm run dev
+```
 
-## 🔒 Security & Quality
-- **Input Validation**: Backend API routes validate incoming message length, history size, and incident data to prevent abuse.
-- **Lazy Initialization**: The Gemini API client initializes lazily to ensure environment variables are present and avoid startup crashes.
-- **Testing**: Includes Vitest setup for component and application testing.
+### 4. Production Build
+Build the React client and compile the Express backend into a single `server.cjs` bundle, then start it:
+```bash
+npm run build
+npm run start
+```
+
+## 🔒 Security & Performance Features
+
+We take security and performance seriously for large-scale stadium deployments:
+- **Rate Limiting**: `express-rate-limit` is configured to prevent API abuse (max 100 requests / 15 mins per IP).
+- **Security Headers**: `helmet` is utilized in production to set secure HTTP response headers.
+- **Payload Validation**: Strict size limits and type checking on incoming Express JSON bodies to prevent excessive data consumption.
+- **Cross-Site Scripting (XSS) Prevention**: `DOMPurify` is used on the frontend to sanitize any Markdown or HTML rendered from the AI responses.
+- **Lazy AI Initialization**: The Gemini API client initializes lazily to ensure environment variables are present and fails gracefully.
+- **Compression**: Gzip compression is enabled via the `compression` middleware to reduce payload sizes and speed up delivery.
+- **Optimized Bundling**: Custom Vite/Rollup chunking separates `node_modules` into a vendor bundle to improve caching.
+
+## 🧪 Testing
+
+The project is fully unit-tested using Vitest and React Testing Library.
+
+Run the test suite:
+```bash
+npm test
+```
+
+Check code quality/linting:
+```bash
+npm run lint
+```
